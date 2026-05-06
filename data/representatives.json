@@ -1,0 +1,57 @@
+[
+  {
+    "id": "rep_001",
+    "name": "Senator Aria",
+    "faction": "Progressives",
+    "influence": 85,
+    "email": "aria@senate.gov",
+    "age": 52
+  },
+  {
+    "id": "rep_002",
+    "name": "Councilor Blake",
+    "faction": "Moderates",
+    "influence": "70",
+    "phone": "555-0102"
+  },
+  {
+    "id": "rep_003",
+    "name": "Minister Chen",
+    "faction": "Conservatives",
+    "influence": 95,
+    "department": "Finance"
+  },
+  {
+    "id": "rep_004",
+    "name": "Delegate Davis",
+    "faction": "Progressives",
+    "influence": null,
+    "region": "North"
+  },
+  {
+    "id": "rep_005",
+    "name": "Ambassador Ellis",
+    "faction": "Moderates",
+    "influence": 150,
+    "tenure_years": 12
+  },
+  {
+    "id": "rep_006",
+    "name": "Director Fox",
+    "faction": "Independents",
+    "influence": 92,
+    "clearance": "top-secret"
+  },
+  {
+    "id": "REP_001",
+    "name": "Senator Aria Duplicate",
+    "faction": "Progressives",
+    "influence": 80
+  },
+  {
+    "id": " rep_004",
+    "name": "Delegate Davis Duplicate",
+    "faction": "Progressives",
+    "influence": 60
+  }
+]

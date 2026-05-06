@@ -1,0 +1,50 @@
+[
+  {
+    "rep_id": "rep_003",
+    "proposal_id": "prop_001",
+    "severity": 8,
+    "reason": "Too costly"
+  },
+  {
+    "rep_id": "rep_001",
+    "proposal_id": "prop_002",
+    "severity": "high",
+    "reason": "Fiscal concerns"
+  },
+  {
+    "rep_id": "rep_002",
+    "proposal_id": "prop_003",
+    "severity": 5,
+    "reason": "Scope unclear"
+  },
+  {
+    "rep_id": "rep_001",
+    "proposal_id": "prop_004",
+    "severity": -3,
+    "reason": "Security risk"
+  },
+  {
+    "rep_id": "rep_003",
+    "proposal_id": "prop_004",
+    "severity": 9,
+    "reason": "Overreach"
+  },
+  {
+    "rep_id": "rep_005",
+    "proposal_id": "prop_004",
+    "severity": null,
+    "reason": "Procedural issues"
+  },
+  {
+    "rep_id": "rep_003",
+    "proposal_id": "prop_001",
+    "severity": 6,
+    "reason": "Duplicate objection"
+  },
+  {
+    "rep_id": "rep_099",
+    "proposal_id": "prop_001",
+    "severity": 7,
+    "reason": "Ghost objector"
+  }
+]

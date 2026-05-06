@@ -1,0 +1,46 @@
+[
+  {
+    "id": "prop_001",
+    "title": "Infrastructure Modernization Act",
+    "sponsor": "rep_001",
+    "priority": 8,
+    "category": "infrastructure",
+    "budget_estimate": 4200000
+  },
+  {
+    "id": "prop_002",
+    "title": "Budget Reconciliation Framework",
+    "sponsor": "rep_003",
+    "priority": 10,
+    "category": "finance"
+  },
+  {
+    "id": "prop_003",
+    "title": "Environmental Protection Initiative",
+    "sponsor": "rep_004",
+    "priority": 9.5,
+    "category": "environment",
+    "notes": "Urgent review needed"
+  },
+  {
+    "id": "prop_004",
+    "title": "Emergency Response Protocol",
+    "sponsor": "rep_006",
+    "priority": 10,
+    "category": "security"
+  },
+  {
+    "id": "prop_003",
+    "title": "Environmental Protection Initiative (Revised)",
+    "sponsor": "rep_004",
+    "priority": 7,
+    "category": "environment"
+  },
+  {
+    "id": "prop_005",
+    "title": "Orphaned Proposal",
+    "sponsor": "rep_099",
+    "priority": 6,
+    "category": "misc"
+  }
+]
