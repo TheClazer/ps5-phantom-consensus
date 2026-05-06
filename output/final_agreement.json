@@ -1,11 +1,13 @@
 {
-  "selected_proposals": [
-    "prop_002",
-    "prop_003"
-  ],
-  "supporting_representatives": [
-    "rep_003",
-    "rep_004"
-  ],
+  "final_agreement": {
+    "proposals": [
+      "prop_002",
+      "prop_003"
+    ],
+    "supporting_reps": [
+      "rep_003",
+      "rep_004"
+    ]
+  },
   "alliances": []
 }

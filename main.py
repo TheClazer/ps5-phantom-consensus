@@ -97,8 +97,10 @@ def run_pipeline(data_dir: Path = Path("data/raw"), output_dir: Path = Path("out
 
     # ── Stage 13: Assemble final output ──────────────────────────────────────
     result = {
-        "selected_proposals": consensus["selected_proposals"],
-        "supporting_representatives": consensus["supporting_representatives"],
+        "final_agreement": {
+            "proposals": consensus["selected_proposals"],
+            "supporting_reps": consensus["supporting_representatives"],
+        },
         "alliances": alliances,
     }
 

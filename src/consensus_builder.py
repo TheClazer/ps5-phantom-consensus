@@ -1,10 +1,17 @@
 """
 Consensus builder.
 
-For p <= 30: enumerate combinations (k=1..3), select max total viability.
-For p > 30: greedy top-3 by viability.
+Bounded combinatorial optimization: for p ≤ 30, we enumerate all combinations
+up to k=3, selecting the combination with maximum total viability. This
+guarantees exact global optimum while keeping runtime tractable (O(p³)
+worst-case, ~4,000 combinations at p=30).
+
+For p > 30: greedy fallback (top-3 by viability).
 
 Objectors to selected proposals are EXCLUDED from supporting_reps.
+
+Determinism: combination enumeration order is fixed by proposal ordering.
+Identical inputs always produce identical consensus.
 """
 from __future__ import annotations
 from itertools import combinations
