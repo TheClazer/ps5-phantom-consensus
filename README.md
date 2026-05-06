@@ -1,9 +1,9 @@
 # Phantom Consensus
 
 ## Team Information
-- **Team Name**: [Team Name]
-- **Year**: [Year]
-- **All-Female Team**: [Yes/No]
+- **Team Name**: [REDPANDAA]
+- **Year**: [2]
+- **All-Female Team**: [No]
 
 ## Architecture Overview
 
