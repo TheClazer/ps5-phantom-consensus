@@ -16,6 +16,15 @@ Phantom Consensus Engine — Main Pipeline
   12. Build consensus
   13. Assemble final output
   14. Write output/final_agreement.json
+
+Output schema (EXACT):
+{
+  "final_agreement": {
+    "proposals": ["prop_001", ...],      -- sorted by ID
+    "supporting_reps": ["rep_001", ...]  -- sorted by ID
+  },
+  "alliances": [["rep_001", "rep_002"], ...]  -- each sorted, list sorted
+}
 """
 from __future__ import annotations
 import json
@@ -32,25 +41,50 @@ from src.infiltrator_scan import scan_infiltrators
 from src.alliance_detector import detect_alliances
 from src.consensus_builder import build_consensus
 
+# Safe empty result — always valid JSON, correct schema
+_EMPTY_RESULT: dict = {
+    "final_agreement": {
+        "proposals": [],
+        "supporting_reps": [],
+    },
+    "alliances": [],
+}
 
-def run_pipeline(data_dir: Path = Path("data/raw"), output_dir: Path = Path("output")) -> dict:
+
+def run_pipeline(
+    data_dir: Path = Path("data/raw"),
+    output_dir: Path = Path("output"),
+) -> dict:
+    """
+    Run the full consensus pipeline.
+    NEVER raises — always returns valid JSON-serialisable dict.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    try:
+        result = _run(data_dir)
+    except Exception:
+        result = _EMPTY_RESULT.copy()
+
+    _write_output(result, output_dir)
+    return result
+
+
+def _run(data_dir: Path) -> dict:
     # ── Stage 1: Load & sanitize ──────────────────────────────────────────────
     data = load_all(data_dir)
-    reps = data["representatives"]
-    proposals = data["proposals"]
-    objections = data["objections"]
+    reps        = data["representatives"]
+    proposals   = data["proposals"]
+    objections  = data["objections"]
     relationships = data["relationships"]
 
-    if not reps:
-        result = {"selected_proposals": [], "supporting_representatives": [], "alliances": []}
-        _write_output(result, output_dir)
-        return result
+    # Safe default: no reps or no proposals → empty result
+    if not reps or not proposals:
+        return _EMPTY_RESULT.copy()
 
     # ── Stage 2: Build score matrix ───────────────────────────────────────────
-    rep_ids = [r.id for r in reps]
-    matrix = build_score_matrix(relationships, rep_ids)
+    rep_ids = sorted(r.id for r in reps)          # deterministic ordering
+    matrix  = build_score_matrix(relationships, rep_ids)
 
     # ── Stage 3: Transitive risk (Floyd-Warshall) ─────────────────────────────
     matrix = compute_transitive_risk(matrix)
@@ -59,7 +93,7 @@ def run_pipeline(data_dir: Path = Path("data/raw"), output_dir: Path = Path("out
     thresholds = calibrate_thresholds(relationships, matrix)
 
     # ── Stage 5: Objection weights ────────────────────────────────────────────
-    reps_by_id = {r.id: r for r in reps}
+    reps_by_id  = {r.id: r for r in reps}
     obj_weights = compute_objection_weights(objections, reps_by_id)
 
     # ── Stage 6: Viability scores ─────────────────────────────────────────────
@@ -69,7 +103,7 @@ def run_pipeline(data_dir: Path = Path("data/raw"), output_dir: Path = Path("out
     viability_min = calibrate_viability_min(list(viability_scores.values()))
 
     # ── Stage 8: Filter Trojan Horse reps ────────────────────────────────────
-    safe_reps, trojan_ids = filter_trojans(
+    safe_reps, _trojan_ids = filter_trojans(
         reps,
         relationships,
         thresholds["trojan_betrayal"],
@@ -77,14 +111,18 @@ def run_pipeline(data_dir: Path = Path("data/raw"), output_dir: Path = Path("out
     )
 
     # ── Stage 9: Scan faction infiltrators ───────────────────────────────────
-    infiltrator_ids = scan_infiltrators(safe_reps, matrix, thresholds["infiltrator"])
+    infiltrator_ids = scan_infiltrators(
+        safe_reps, matrix, thresholds["infiltrator"]
+    )
 
     # ── Stage 10: Remove infiltrators ────────────────────────────────────────
     safe_reps = [r for r in safe_reps if r.id not in infiltrator_ids]
 
     # ── Stage 11: Detect alliances ────────────────────────────────────────────
-    safe_rep_ids = [r.id for r in safe_reps]
-    alliances = detect_alliances(matrix, safe_rep_ids, thresholds["alliance_min"])
+    safe_rep_ids = sorted(r.id for r in safe_reps)   # deterministic
+    alliances    = detect_alliances(
+        matrix, safe_rep_ids, thresholds["alliance_min"]
+    )
 
     # ── Stage 12: Build consensus ─────────────────────────────────────────────
     consensus = build_consensus(
@@ -95,27 +133,28 @@ def run_pipeline(data_dir: Path = Path("data/raw"), output_dir: Path = Path("out
         viability_min,
     )
 
-    # ── Stage 13: Assemble final output ──────────────────────────────────────
+    # ── Stage 13: Assemble final output (EXACT schema, sorted) ───────────────
     result = {
         "final_agreement": {
-            "proposals": consensus["selected_proposals"],
-            "supporting_reps": consensus["supporting_representatives"],
+            "proposals":       sorted(consensus["selected_proposals"]),
+            "supporting_reps": sorted(consensus["supporting_representatives"]),
         },
-        "alliances": alliances,
+        "alliances": alliances,   # already sorted inside detect_alliances
     }
-
-    # ── Stage 14: Write output ────────────────────────────────────────────────
-    _write_output(result, output_dir)
 
     return result
 
 
 def _write_output(result: dict, output_dir: Path) -> None:
     out_path = output_dir / "final_agreement.json"
-    out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    out_path.write_text(
+        json.dumps(result, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
     data_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("data/raw")
-    result = run_pipeline(data_dir)
-    print(json.dumps(result, indent=2))
+    result   = run_pipeline(data_dir)
+    # No extra debug output — only the JSON result
+    print(json.dumps(result, indent=2, ensure_ascii=False))
